@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+const formatNumber = (number) => {
+  if (number === null || number === undefined || number === '') return '';
+  return new Intl.NumberFormat('es-CO').format(Number(number));
+};
 import { Link } from 'react-router-dom';
 import { getProductos } from '../services/api';
 import defaultProductImage from '../assets/default-product.jpg';
@@ -49,7 +53,7 @@ const Home = () => {
                 />
                 <h3>{p.name}</h3>
               </Link>
-              <p className="product-price">${p.price}</p>
+              <p className="product-price">${formatNumber(p.price)}</p>
             </div>
           );
         })}

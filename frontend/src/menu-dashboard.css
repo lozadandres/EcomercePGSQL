@@ -1,0 +1,95 @@
+/* ===== MENU DASHBOARD ===== */
+.menu-dashboard {
+  position: fixed;
+  top: 80px;
+  left: -250px; /* escondido */
+  width: 250px;
+  height: 100%;
+  background: #1a1a1a;
+  color: #fff;
+  padding: 20px;
+  transition: left 0.3s ease;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(90deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.95) 100%);
+  --webkit-backdrop-filter: blur(10px);
+}
+
+.menu-dashboard.open {
+  left: 0; /* visible */
+}
+
+.menu-dashboard .top-menu {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.menu-dashboard .logo span {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color:  #ff4500;
+}
+
+.menu-dashboard .toggle {
+  font-size: 2rem;
+  cursor: pointer;
+  color: #fff;
+}
+
+.menu-dashboard .input-search {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  background: #2a2a2a;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.menu-dashboard .input-search i {
+  margin-right: 8px;
+  color: #fff;
+}
+
+.menu-dashboard .input-search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #fff;
+  flex: 1;
+}
+
+.menu-dashboard .menu {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.menu-dashboard .enlace {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
+  transition: background 0.3s;
+  text-decoration: none;
+  color: #fff;
+}
+
+.menu-dashboard .enlace i {
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.menu-dashboard .enlace span {
+  font-size: 1rem;
+}
+
+.menu-dashboard .enlace:hover {
+  color: #ff4500;
+  background: rgba(255, 69, 0, 0.1);
+  box-shadow: 0 0 15px rgba(255, 69, 0, 0.3);
+}

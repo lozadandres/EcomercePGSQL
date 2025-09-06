@@ -1,7 +1,12 @@
+const formatNumber = (number) => {
+  if (number === null || number === undefined || number === '') return '';
+  return new Intl.NumberFormat('es-CO').format(Number(number));
+};
 import React, { useState, useEffect } from 'react';
 import { getCarrito, removeFromCarrito, clearCarrito, updateCarrito } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
+import defaultProductImage from '../assets/default-product.jpg';
 
 const CarritoCompra = () => {
   const [carrito, setCarrito] = useState({ Productos: [] });
@@ -27,7 +32,7 @@ const CarritoCompra = () => {
       await removeFromCarrito(user.id, productoId);
       fetchCarrito(); // Recargar el carrito
       toast.success("Producto eliminado del carrito");
-    } catch (error) {
+    } catch {
       toast.error("Error al eliminar el producto del carrito");
     }
   };
@@ -37,7 +42,7 @@ const CarritoCompra = () => {
       await clearCarrito(user.id);
       fetchCarrito(); // Recargar el carrito
       toast.success("Carrito vaciado");
-    } catch (error) {
+    } catch {
       toast.error("Error al vaciar el carrito");
     }
   };
@@ -48,7 +53,7 @@ const CarritoCompra = () => {
       await updateCarrito(user.id, productoId, quantity);
       fetchCarrito();
       toast.info("Cantidad actualizada");
-    } catch (error) {
+    } catch {
       toast.error("Error al actualizar la cantidad");
     }
   };
@@ -74,7 +79,12 @@ const CarritoCompra = () => {
           <ul>
             {carrito.Productos && carrito.Productos.map(item => (
               <li key={item.id} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                <span>{item.name} - ${item.price}</span>
+                <img 
+                  src={item.image ? `http://localhost:5000${item.image}` : defaultProductImage} 
+                  alt={item.name} 
+                  style={{ width: '50px', height: '50px', marginRight: '10px' }} 
+                />
+                <span>{item.name} - ${formatNumber(item.price)}</span>
                 <input 
                   type="number" 
                   value={item.CarritoProducto.quantity}
@@ -82,12 +92,12 @@ const CarritoCompra = () => {
                   min="1"
                   style={{ width: '80px', margin: '0 10px' }}
                 />
-                <span>Subtotal: ${(item.price * item.CarritoProducto.quantity).toFixed(2)}</span>
+                <span>Subtotal: ${formatNumber(item.price * item.CarritoProducto.quantity)}</span>
                 <button onClick={() => handleRemove(item.id)} style={{ marginLeft: '10px' }}>Eliminar</button>
               </li>
             ))}
           </ul>
-          <h3>Total: ${calculateTotal()}</h3>
+          <h3>Total: ${formatNumber(calculateTotal())}</h3>
           <button onClick={handleClear}>Vaciar Carrito</button>
           <button>Proceder al Pago</button>
         </>

@@ -1,3 +1,7 @@
+const formatNumber = (number) => {
+  if (number === null || number === undefined || number === '') return '';
+  return new Intl.NumberFormat('es-CO').format(Number(number));
+};
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getProductoById, addToCarrito } from '../services/api';
@@ -31,7 +35,7 @@ const DetalleProducto = () => {
     try {
       await addToCarrito(user.id, producto.id, 1);
       toast.success("Producto añadido al carrito");
-    } catch (error) {
+    } catch {
       toast.error("Error al añadir producto al carrito");
     }
   };
@@ -95,9 +99,9 @@ const DetalleProducto = () => {
           <p className="description">{producto.description}</p>
           <p className="category">Categoría: {producto.Categoria?.name || 'Sin categoría'}</p>
 
-          <h3 className="price">${producto.price}</h3>
+          <h3 className="price">${formatNumber(producto.price)}</h3>
           <p className="stock">Stock: {producto.stock}</p>
-          <button className="add-to-cart-btn" onClick={handleAddToCart}>
+          <button onClick={handleAddToCart}>
             Añadir al carrito
           </button>
         </div>

@@ -34,6 +34,7 @@ const SearchBar = ({ onSearch, placeholder = "Buscar...", className = "" }) => {
             type="button"
             onClick={handleClear}
             className="search-clear-btn"
+            style={{ background: 'transparent', border: 'none', position: 'absolute', right: '120px', boxShadow: 'none'}}
           >
             ×
           </button>

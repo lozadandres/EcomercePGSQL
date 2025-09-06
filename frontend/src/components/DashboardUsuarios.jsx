@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import defaultProductImage from '../assets/default-product.jpg';
 import { getUsuarios, updateUsuario, deleteUsuario, createUsuario } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -47,7 +48,7 @@ const DashboardUsuarios = () => {
   const [isCreating, setIsCreating] = useState(false);
   const { user: currentUser } = useAuth();
 
-  const fetchUsuarios = async () => {
+  const fetchUsuarios = useCallback(async () => {
     if (currentUser && currentUser.isAdmin) {
       try {
         const data = await getUsuarios(currentUser.id);
@@ -56,11 +57,11 @@ const DashboardUsuarios = () => {
         console.error("Error al cargar usuarios:", error);
       }
     }
-  };
+  }, [currentUser]);
 
   useEffect(() => {
     fetchUsuarios();
-  }, [currentUser]);
+  }, [fetchUsuarios]);
 
   const handleSave = async (userData) => {
     try {
@@ -79,7 +80,7 @@ const DashboardUsuarios = () => {
       fetchUsuarios();
       setEditingUser(null);
       setIsCreating(false);
-    } catch (error) {
+    } catch {
       toast.error(`Error al ${editingUser ? 'actualizar' : 'crear'} el usuario`);
     }
   };
@@ -90,7 +91,7 @@ const DashboardUsuarios = () => {
         await deleteUsuario(id, currentUser.id);
         fetchUsuarios();
         toast.success('Usuario eliminado');
-      } catch (error) {
+      } catch {
         toast.error('Error al eliminar el usuario');
       }
     }
@@ -105,7 +106,13 @@ const DashboardUsuarios = () => {
     <div>
       <h3>Gestionar Usuarios</h3>
       
-      {!isCreating && <button onClick={() => setIsCreating(true)}>Agregar Usuario</button>}
+      {!isCreating && !editingUser && (
+        <button
+          onClick={() => setIsCreating(true)}
+        >
+          AGREGAR USUARIO
+        </button>
+      )}
 
       {(editingUser || isCreating) && (
         <UserForm 
@@ -116,35 +123,48 @@ const DashboardUsuarios = () => {
         />
       )}
 
-      <table className="usuarios-table">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Tipo</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {usuarios.map(u => (
-            <tr key={u.id}>
-              <td>{u.name}</td>
-              <td>{u.email}</td>
-              <td>{u.isAdmin ? 'Admin' : 'Usuario'}</td>
-              <td>
-                <span className={`status ${u.isActive ? 'active' : 'inactive'}`}>
-                  {u.isActive ? 'Activo' : 'Inactivo'}
-                </span>
-              </td>
-              <td>
-                <button onClick={() => setEditingUser(u)}>Editar</button>
-                <button onClick={() => handleDelete(u.id)}>Eliminar</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {!(editingUser || isCreating) && (
+        <div className="product-table-container">
+          <table className="product-table">
+            <thead>
+              <tr>
+                <th>IMAGEN</th>
+                <th>NOMBRE</th>
+                <th>EMAIL</th>
+                <th>TIPO</th>
+                <th>ESTADO</th>
+                <th>ACCIONES</th>
+              </tr>
+            </thead>
+            <tbody>
+              {usuarios.map(u => (
+                <tr key={u.id}>
+                  <td className="product-image">
+                    {/* Si tienes imagen de usuario, reemplaza src por la propiedad correspondiente */}
+                    <img
+                      src={u.image ? `http://localhost:5000${u.image}` : defaultProductImage}
+                      alt={u.name}
+                      style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8, border: '2px solid rgba(255,69,0,0.5)' }}
+                    />
+                  </td>
+                  <td>{u.name}</td>
+                  <td>{u.email}</td>
+                  <td>{u.isAdmin ? 'Admin' : 'Usuario'}</td>
+                  <td>
+                    <span className={`status ${u.isActive ? 'active' : 'inactive'}`}>
+                      {u.isActive ? 'Activo' : 'Inactivo'}
+                    </span>
+                  </td>
+                  <td className="product-actions">
+                    <button className="edit-btn" onClick={() => setEditingUser(u)}>Editar</button>
+                    <button className="delete-btn" onClick={() => handleDelete(u.id)}>Eliminar</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

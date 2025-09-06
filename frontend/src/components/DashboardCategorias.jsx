@@ -16,16 +16,21 @@ const CategoryForm = ({ category, onSave, onCancel }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Nombre de la categoría"
-        required
-      />
-      <button type="submit">Guardar</button>
-      <button type="button" onClick={onCancel}>Cancelar</button>
+    <form onSubmit={handleSubmit} className="category-form">
+      <div className="form-group">
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Nombre de la categoría"
+          className="form-control"
+          required
+        />
+      </div>
+      <div className="form-actions">
+        <button type="submit" className="save-btn">Guardar</button>
+        <button type="button" className="cancel-btn" onClick={onCancel}>Cancelar</button>
+      </div>
     </form>
   );
 };
@@ -57,7 +62,7 @@ const DashboardCategorias = () => {
       fetchCategorias();
       setEditingCategory(null);
       setIsCreating(false);
-    } catch (error) {
+    } catch {
       toast.error('Error al guardar la categoría');
     }
   };
@@ -68,7 +73,7 @@ const DashboardCategorias = () => {
         await deleteCategoria(id, user.id);
         fetchCategorias();
         toast.success('Categoría eliminada');
-      } catch (error) {
+      } catch {
         toast.error('Error al eliminar la categoría');
       }
     }
@@ -89,15 +94,29 @@ const DashboardCategorias = () => {
         <button onClick={() => setIsCreating(true)}>Crear Nueva Categoría</button>
       )}
 
-      <ul>
-        {categorias.map(c => (
-          <li key={c.id}>
-            {c.name}
-            <button onClick={() => setEditingCategory(c)}>Editar</button>
-            <button onClick={() => handleDelete(c.id)}>Eliminar</button>
-          </li>
-        ))}
-      </ul>
+      {!(isCreating || editingCategory) && (
+        <div className="product-table-container">
+          <table className="product-table">
+            <thead>
+              <tr>
+                <th>NOMBRE</th>
+                <th>ACCIONES</th>
+              </tr>
+            </thead>
+            <tbody>
+              {categorias.map(c => (
+                <tr key={c.id}>
+                  <td>{c.name}</td>
+                  <td className="product-actions">
+                    <button className="edit-btn" onClick={() => setEditingCategory(c)}>Editar</button>
+                    <button className="delete-btn" onClick={() => handleDelete(c.id)}>Eliminar</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

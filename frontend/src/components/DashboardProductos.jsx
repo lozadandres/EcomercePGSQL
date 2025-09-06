@@ -4,6 +4,11 @@ import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import defaultProductImage from '../assets/default-product.jpg';
 
+const formatNumber = (number) => {
+  if (number === null || number === undefined || number === '') return '';
+  return new Intl.NumberFormat('es-CO').format(Number(number));
+};
+
 const ProductForm = ({ product, onSave, onCancel }) => {
   const [formData, setFormData] = useState(product || { name: '', price: '', description: '', stock: '', CategoriaId: '' });
   const [imageFiles, setImageFiles] = useState([]);
@@ -118,7 +123,11 @@ const ProductForm = ({ product, onSave, onCancel }) => {
           placeholder="Precio" 
           className="form-control"
           required 
+          step="1000"
         />
+        {formData.price !== '' && (
+          <div className="formatted-number">{formatNumber(formData.price)}</div>
+        )}
       </div>
       
       <div className="form-group">
@@ -198,6 +207,9 @@ const ProductForm = ({ product, onSave, onCancel }) => {
           className="form-control"
           required 
         />
+        {formData.stock !== '' && (
+          <div className="formatted-number">{formatNumber(formData.stock)}</div>
+        )}
       </div>
       
       <div className="form-group categoria-selector">
@@ -268,7 +280,7 @@ const DashboardProductos = () => {
         await deleteProducto(id, user.id);
         fetchProductos();
         toast.success('Producto eliminado');
-      } catch (error) {
+      } catch {
         toast.error('Error al eliminar el producto');
       }
     }
@@ -334,38 +346,40 @@ const DashboardProductos = () => {
         <button onClick={() => setIsCreating(true)}>Crear Nuevo Producto</button>
       )}
 
-      <div className="product-table-container">
-        <table className="product-table">
-          <thead>
-            <tr>
-              <th>IMAGEN</th>
-              <th>NOMBRE</th>
-              <th>PRECIO</th>
-              <th>STOCK</th>
-              <th>CATEGORÍA</th>
-              <th>ACCIONES</th>
-            </tr>
-          </thead>
-          <tbody>
-            {productos.map(p => (
-              <tr key={p.id}>
-                <td className="product-image">
-                  {p.image && <img src={`http://localhost:5000${p.image}`} alt={p.name} />}
-                  {!p.image && <img src={defaultProductImage} alt={p.name} />}
-                </td>
-                <td>{p.name}</td>
-                <td>${p.price}</td>
-                <td>{p.stock}</td>
-                <td>{p.Categoria ? p.Categoria.name : 'Sin categoría'}</td>
-                <td className="product-actions">
-                  <button className="edit-btn" onClick={() => setEditingProduct(p)}>Editar</button>
-                  <button className="delete-btn" onClick={() => handleDelete(p.id)}>Eliminar</button>
-                </td>
+      {!(isCreating || editingProduct) && (
+        <div className="product-table-container">
+          <table className="product-table">
+            <thead>
+              <tr>
+                <th>IMAGEN</th>
+                <th>NOMBRE</th>
+                <th>PRECIO</th>
+                <th>STOCK</th>
+                <th>CATEGORÍA</th>
+                <th>ACCIONES</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {productos.map(p => (
+                <tr key={p.id}>
+                  <td className="product-image">
+                    {p.image && <img src={`http://localhost:5000${p.image}`} alt={p.name} />}
+                    {!p.image && <img src={defaultProductImage} alt={p.name} />}
+                  </td>
+                  <td>{p.name}</td>
+                  <td>${formatNumber(p.price)}</td>
+                  <td>{formatNumber(p.stock)}</td>
+                  <td>{p.Categoria ? p.Categoria.name : 'Sin categoría'}</td>
+                  <td className="product-actions">
+                    <button className="edit-btn" onClick={() => setEditingProduct(p)}>Editar</button>
+                    <button className="delete-btn" onClick={() => handleDelete(p.id)}>Eliminar</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };
